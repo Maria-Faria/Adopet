@@ -1,2 +1,4 @@
-# Adopet
-Projeto desenvolvido com o objetivo de desenvolver habilidades em TypeScript.
+# 🐶 Adopet
+🚧`em construção`🚧
+
+## 📝Sobre o projeto
