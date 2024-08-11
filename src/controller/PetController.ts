@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
 import type TipoPet from "../tipos/TipoPet";
+import EnumEspecie from "../enum/EnumEspecie";
 
 let petsList: TipoPet[] = [];
 
 export default class PetController {
     createPet(req: Request, res: Response) {
         const {id, adotado, especie, idade, nome} = <TipoPet>req.body;
+
+        if(!Object.values(EnumEspecie).includes(especie)) {
+            return res.status(400).json({error: "Espécie inválida!"});
+        }
 
         const newPet: TipoPet = {id, adotado, especie, idade, nome};
 
