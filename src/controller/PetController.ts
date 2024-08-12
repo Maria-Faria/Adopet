@@ -9,6 +9,7 @@ let petsList: TipoPet[] = [];
 let id: number = 0;
 
 function generateId() {
+    
     id += 1;
     return id;
 }
