@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import AdopterRepository from "../repositories/AdopterRepository";
 import AdopterEntity from "../entities/AdopterEntity";
+import AddressEntity from "../entities/AddressEntity";
 
 export default class AdopterController {
     constructor(private repository: AdopterRepository) {}
@@ -39,6 +40,17 @@ export default class AdopterController {
             return res.status(404).json({error: message});
         }
 
-        return res.sendStatus(201);
+        return res.sendStatus(204);
+    }
+
+    async updateAdopterAddress(req: Request, res: Response) {
+        const { id } = req.params;
+        const { success, message } = await this.repository.updateAdopterAddress(Number(id), <AddressEntity>req.body);
+
+        if(!success) {
+            return res.status(404).json({error: message});
+        }
+
+        return res.sendStatus(204);
     }
 }
