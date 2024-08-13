@@ -3,6 +3,7 @@ import type TipoPet from "../tipos/TipoPet";
 import EnumEspecie from "../enum/EnumEspecie";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
+import EnumPorte from "../enum/EnumPorte";
 
 let petsList: TipoPet[] = [];
 
@@ -17,13 +18,17 @@ function generateId() {
 export default class PetController {
     constructor(private repository: PetRepository) {}
     async createPet(req: Request, res: Response) {
-        const { adotado, especie, dateOfBirth, nome } = <PetEntity>req.body;
+        const { adotado, especie, dateOfBirth, nome, porte } = <PetEntity>req.body;
 
         if(!Object.values(EnumEspecie).includes(especie)) {
             return res.status(400).json({error: "Espécie inválida!"});
         }
 
-        const newPet = new PetEntity(nome, especie, dateOfBirth, adotado);
+        if(porte && (!(porte in EnumPorte))) {
+            return res.status(400).json({error: "Porte inválido!"});
+        }
+
+        const newPet = new PetEntity(nome, especie, dateOfBirth, adotado, porte);
 
         await this.repository.createPet(newPet);
         res.status(201).json(newPet);
@@ -69,5 +74,13 @@ export default class PetController {
         }
 
         return res.sendStatus(204);
+    }
+
+    async searchPetForSize(req: Request, res: Response) {
+        const { porte } = req.query;
+
+        const petsList = await this.repository.searchPetForSize(<EnumPorte>porte);
+
+        return res.status(200).json(petsList);
     }
 }
