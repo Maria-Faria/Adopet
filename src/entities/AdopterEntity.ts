@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import AddressEntity from "./AddressEntity";
+import PetEntity from "./PetEntity";
 
 @Entity()
 export default class AdopterEntity {
@@ -22,6 +23,10 @@ export default class AdopterEntity {
     @JoinColumn()
     address?: AddressEntity;
 
+
+    @OneToMany(() => PetEntity, (pet) => pet.adopter)
+    pets!: PetEntity[];
+    
     constructor(name: string, password: string, phone: string, photo?: string, address?: AddressEntity) {
         this.name = name;
         this.password = password;

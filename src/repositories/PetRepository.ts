@@ -1,12 +1,15 @@
 import { Repository } from "typeorm";
 import PetEntity from "../entities/PetEntity";
 import InterfacePetRepository from "./interface/InterfacePetRepository";
+import AdopterEntity from "../entities/AdopterEntity";
 
 export default class PetRepository implements InterfacePetRepository{
     private repository: Repository<PetEntity>;
+    private adopterRepository: Repository<AdopterEntity>;
 
-    constructor(repository: Repository<PetEntity>) {
+    constructor(repository: Repository<PetEntity>, adopterRepository: Repository<AdopterEntity>) {
         this.repository = repository;
+        this.adopterRepository = adopterRepository;
     }
     
     createPet(pet: PetEntity): void {
@@ -35,6 +38,7 @@ export default class PetRepository implements InterfacePetRepository{
             return { success: false, message: "Erro ao atulizar as informações do Pet" };
         };
     }
+
     async deletePet(id: number): Promise<{success: boolean; message?: string}> {
         try {
             const petToDelete = await this.repository.findOne({ where: { id }});
@@ -51,6 +55,26 @@ export default class PetRepository implements InterfacePetRepository{
             console.log(error);
             return { success: false, message: "Ocorreu um erro ao deletar o Pet" };
         }
+    }
 
+    async adoptPet(id_pet: number, id_adopter: number): Promise<{ success: boolean; message?: string }> {
+        const pet = await this.repository.findOne({ where: {id: id_pet}});
+
+        if(!pet) {
+            return { success: false, message: "Pet não encontrado"};
+        }
+
+        const adopter = await this.adopterRepository.findOne({where: {id: id_adopter}});
+
+        if(!adopter) {
+            return { success: false, message: "Adotante não encontrado" };
+        }
+
+        pet.adopter = adopter;
+        pet.adotado = true;
+        
+        await this.repository.save(pet);
+
+        return { success: true };
     }
 }
