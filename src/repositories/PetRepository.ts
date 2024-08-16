@@ -85,4 +85,10 @@ export default class PetRepository implements InterfacePetRepository{
         return pets;
 
     }
+
+    async searchPetForGenericField<Type extends keyof PetEntity>(field: Type, value: PetEntity[Type]): Promise<PetEntity[]> {
+        const pets = await this.repository.find({where: {[field]: value}});
+        
+        return pets;
+    }
 }

@@ -83,4 +83,15 @@ export default class PetController {
 
         return res.status(200).json(petsList);
     }
+
+    async searchPerForGenericField(req: Request, res: Response) {
+        const { field, value } = req.query;
+
+        const petsList = await this.repository.searchPetForGenericField(
+            field as keyof PetEntity,
+            value as string
+        );
+
+        return res.status(200).json(petsList);
+    }
 }
